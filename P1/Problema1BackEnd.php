@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>BackEnd Problema1</title>
+        <title></title>
         <style>
             table, th, tr, td{
                 border: 1px solid white;
@@ -14,120 +12,112 @@
         </style>
     </head>
     <body>
-
-        <?php
-        /* Declaracion de funcion */
-
-        function creacionTabla($mediaParcial, $criterio, $orden) {
-
-            /* Ordenamos el vector asociativo segun el criterio */
-            if ($criterio == "nombre") {
-                if ($orden == "ascendente") {
-                    ksort($mediaParcial);
-                } else {
-                    krsort($mediaParcial);
-                }
-            } else {
-                if ($orden == "ascendente") {
-                    asort($mediaParcial);
-                } else {
-                    arsort($mediaParcial);
-                }
-            }
-
-            echo "<table>";
-            echo "<thead>";
-            echo "<tr>";
-            echo "<th>Taller</th>";
-            echo "<th>Media</th>";
-            echo "</tr>";
-            echo "</thead>";
-            echo "<tbody>";
-
-            foreach ($mediaParcial as $key => $value) {
-                echo "<tr>";
-                echo "<td>" . $key . "</td>";
-                echo "<td>" . $value . "</td>";
-            }
-
-            echo "</tbody>";
-            echo "</table>";
-        }
-
-        if (isset($_POST["envio"])) {
-            if (!isset($_POST["nombreTaller"]) || $_POST["nombreTaller"] == "") {
-                $errores[] = "Por favor introduzca un nombre de taller";
-            }if (!isset($_POST["criticas"]) || $_POST["criticas"] == "") {
-                $errores[] = "Por favor introduzca las criticas necesarias";
-            } else {
-                $criterio = $_POST["criterio"];
-                $orden = $_POST["orden"];
-                $criticasSeparadasIntro = explode("\n", $_POST["criticas"]);
-                foreach ($criticasSeparadasIntro as $criticas) {
-                    $critica = explode(",", $criticas);
-                    $talleres[] = $critica[0];
-                    $notas[] = $critica[1];
-                }
-
-                /* Nos permite conocer todos los nombres unicos de los talleres introducidos por el usuario */
-                $nombresUnicos = array_unique($talleres);
-
-                foreach ($nombresUnicos as $nombre) {
-
-                    $contador = 0;
-                    $sumaParcial = 0;
-
-                    for ($i = 0; $i < count($talleres); $i++) {
-                        if ($nombre === $talleres[$i]) {
-                            $contador++;
-                            $sumaParcial += $notas[$i];
-                        }
+        
+        
+        <?php 
+        
+            function imprimir($MediaTotal, $criterio, $orden){
+                
+                if($criterio == "nombre"){
+                    if($orden == "ascendente"){
+                        ksort($MediaTotal);
                     }
-
-                    $mediaParcial[$nombre] = $sumaParcial / $contador;
+                    else{
+                        krsort($MediaTotal);
+                    }
                 }
-
-                creacionTabla($mediaParcial, $_POST["criterio"], $_POST["orden"]);
+                else{
+                   if($orden == "ascendente"){
+                        asort($MediaTotal);
+                    }
+                    else{
+                        arsort($MediaTotal);
+                    }
+                }
+                
+                
+                echo '<table>';
+                echo '<thead>';
+                echo '<tr>';
+                echo '<th>Taller</th>';
+                echo '<th>Media</th>';
+                echo '</tr>';
+                echo '</thead>';
+                echo '<tbody>';
+                foreach ($MediaTotal as $key => $value) {
+                    echo '<tr>';
+                    echo '<td>' . $key . '</td>';
+                    echo '<td>' . $value . '</td>';
+                    echo '</tr>';
+                }
+                echo '</tbody>';
+                echo '</table>';
             }
-        }
+        
+            if(isset($_POST['envio'])){
+                if($_POST['nombreTaller'] == '' || !isset($_POST['nombreTaller'])){
+                    $errores[] = "Error nombre taller";
+                    
+                }
+                
+                if($_POST['Criticas'] == '' || !isset($_POST['Criticas'])){
+                    $errores[] ="Error en las criticas";
+                }
+                else{
+                    $criterio = $_POST['criterio'];
+                    $orden = $_POST['orden'];
+                    $criticasSeparadasIntro = explode("\n", $_POST['Criticas']);
+                    foreach ($criticasSeparadasIntro as $criticas) {
+                        $critica = explode(",", $criticas);
+                        $talleres[] = $critica[0];
+                        $notas[] = $critica[1];
+                    }
+                    
+                    $nombresUnicos = array_unique($talleres);
+                    foreach ($nombresUnicos as $nombre){
+                        $cont = 0;
+                        $sumaParcial = 0;
+                        for($i = 0; $i < count($talleres); $i++){
+                            if(strcmp($nombre, $talleres[$i]) == 0){
+                                $cont++;
+                                $sumaParcial += $notas[$i];
+                            }
+                        }
+                        $MediaTotal[$nombre] = $sumaParcial / $cont;
+                    }
+                    imprimir($MediaTotal, $criterio, $orden);
+                }
+            }
+        
+        
         ?>
-
+        
         <?php
-        if (isset($errores)) {
-            foreach ($errores as $error) {
-                echo $error . "<br>";
+        if(isset($errores)){
+            foreach ($errores as $error){
+                echo $error . '<br>';
             }
-            ?>
-
-            <form action="./Problema1BackEnd.php" method="POST">
-
-                <label>Nombre del Taller:</label>
-                <br>
-                <input type="text" name="nombreTaller" required>
-                <br>
-
-                <label>Criterio de Ordenaci&oacute; (Nombre/Nota): </label>
-                <br>
-                <select name="criterio" id="criterio" required>
-                    <option id="criterio" value="nombre">Nombre</option>
-                    <option id="criterio" value="nota">Nota</option>
-                </select>
-                <br><!-- comment -->
-
-                <label>Criterio de Ordenaci&oacute; (Ascendente/Descendente): </label>
-                <br>
-                <input type="radio" name="orden" value="ascendente">
-                <label>Ascendente</label>
-                <input type="radio" name="orden" value="descendente" checked>
-                <label>Descendente</label>
-                <br>
-                <label>Comentarios: </label>
-                <br>
-                <textarea name="criticas" rows="10" cols="40" required></textarea>
-                <br><!-- comment -->
-                <button type="submit" name="envio">Enviar</button>
-            </form>
-            <?php
+        ?>
+        <form action="./back.php" method="POST">
+            <input type="text" name="nombreTaller" required>
+            <br>
+            <br>
+            <select name="criterio" id="criterio" required>
+                <option id="criterio">Nombre</option>
+                <option id="criterio">Nota</option>
+            </select>
+            <br>
+            <input type="radio" name="orden" value="ascedente">
+            <label>Ascendente</label>
+            <input type="radio" name="orden" value="descendente" checked>
+            <label>Descendente</label>
+            <br>
+            <br>
+            <textarea name="Criticas" rows="10" cols="40" required></textarea>
+            <br>
+            <button type="submit" name="envio">Enviar</button>
+        </form>
+        <?php
         }
         ?>
     </body>
