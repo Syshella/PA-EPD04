@@ -11,7 +11,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
     <body>
         
         <form action="./Problema2Back.php" method="POST">
+            <label>Frase original: </label>
+            <br>
             <textarea id="area" name="frase" rows="5" cols="80"></textarea>
+            <br>
+            <label>Tupla de palabras a anonimizar: </label>
             <br>
             <textarea id="area" name="anonimizar" rows="5" cols="80"></textarea>
             <br>
