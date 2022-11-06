@@ -61,7 +61,7 @@
                 echo $error . '<br>';
             }
             ?>
-            <form action="back.php" method="POST">
+        <form action="./Problema2Back.php" method="POST">
                 <label>Frase original: </label>
                 <br>
                 <textarea id="area" name="frase" rows="5" cols="80"></textarea>
